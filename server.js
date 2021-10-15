@@ -22,7 +22,8 @@ app.use(morgan("dev"));
 // it is a choice that you wanna use __dirname or not because you are on root level.
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "uploads", "images")));
-app.use("/files", express.static(path.join(__dirname, "uploads", "files")));
+// app.use("/audio", express.static(path.join(__dirname, "uploads", "audio")));
+app.use("/audio", express.static(path.join(__dirname, "uploads", "songs")));
 
 // routes
 app.use("/api", user);
