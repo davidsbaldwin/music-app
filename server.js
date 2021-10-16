@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "uploads", "images")));
 // app.use("/audio", express.static(path.join(__dirname, "uploads", "audio")));
 // app.use("/audio", express.static(path.join(__dirname, "uploads", "songs")));
-app.use("/audio", express.static(path.join(__dirname, "uploads", "songs")));
+app.use("/audio", express.static(path.join(__dirname, "uploads", "audio")));
 
 // routes
 app.use("/api", user);

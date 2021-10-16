@@ -23,7 +23,7 @@ exports.signUp = async (req, res) => {
 };
 
 exports.signIn = async (req, res) => {
-    const { password, email } = await req.body;
+    const { password, email, code } = await req.body;
 
     const { error } = singInValidation.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -35,14 +35,14 @@ exports.signIn = async (req, res) => {
     if (!validPass) return res.status(401).send("Invalid Credentials");
 
     const token = jwt.sign({ id: exist._id }, process.env.JWT_SECRET_KEY);
-    const user = { name: exist?.name, email, token };
+    const user = { name: exist?.name, email, token, code: exist._id };
 
     res.status(200).send(user);
 };
 
 exports.getAlbums = async (req, res) => {
     try {
-        const albums = await Albums.find();
+        const albums = await Albums.find().sort({ _id: -1 });
         return res.status(200).send(albums);
     } catch (err) {
         return res.status(500).send({ msg: "Not Found!", err });
