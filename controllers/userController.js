@@ -4,13 +4,17 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const Albums = require("../models/Album");
 const Songs = require("../models/Songs");
+const codes = require("../data/codes");
 
 exports.signUp = async (req, res) => {
-    const { password, email } = await req.body;
+    const { password, email, code } = await req.body;
+    console.log(req.body);
+    if (!codes.includes(code)) return res.status(400).send("Invalid Code: " + code);
+
     const { error } = singUpValidation.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const exist = await User.findOne({ email });
+    const exist = await User.findOne({ $or: [{ email }, { code }] });
     if (exist) return res.status(422).send("User Already Exist");
 
     const hashedPass = await bcrypt.hash(password, 10);
@@ -23,7 +27,7 @@ exports.signUp = async (req, res) => {
 };
 
 exports.signIn = async (req, res) => {
-    const { password, email, code } = await req.body;
+    const { password, email } = await req.body;
 
     const { error } = singInValidation.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -50,10 +54,10 @@ exports.getAlbums = async (req, res) => {
 };
 
 exports.getSongs = async (req, res) => {
-    const { album_id } = req.params;
+    const { album_name } = req.params;
     // const domainHost = `${req.protocol}://${req.get("host")}/`;
     try {
-        const songs = await Songs.find({ Album_id: album_id });
+        const songs = await Songs.find({ Album_Name: album_name });
         return res.status(200).send(songs);
     } catch (err) {
         return res.status(500).send({ msg: "Not Found!", err });
