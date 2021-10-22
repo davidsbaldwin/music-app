@@ -4,6 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const connectDB = require("./db");
 const morgan = require("morgan");
+// const AWS = require("aws-sdk");
 
 // app config
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,18 @@ const app = express();
 
 // DB Config
 connectDB();
+
+// const bucketName = process.env.AWS_BUCKET_NAME;
+// const accessKeyId = process.env.AWS_ACCESS_KEY;
+// const secretAccessKey = process.env.AWS_SECRET_KEY;
+// const region = process.env.AWS_REGION;
+
+// // AWS config
+// let s3 = new AWS.S3({
+//     accessKeyId,
+//     secretAccessKey,
+//     region,
+// });
 
 // middlewares
 app.use(cors());
@@ -22,8 +35,8 @@ app.use(morgan("dev"));
 // it is a choice that you wanna use __dirname or not because you are on root level.
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "uploads", "images")));
+app.use("/audio", express.static(path.join(__dirname, "uploads", "files")));
 // app.use("/files", express.static(path.join(__dirname, "uploads", "audio")));
-app.use("/audio", express.static(path.join(__dirname, "uploads", "audio")));
 
 // routes
 app.use("/api", user);
