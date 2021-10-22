@@ -36,6 +36,7 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "uploads", "images")));
 app.use("/audio", express.static(path.join(__dirname, "uploads", "files")));
+// app.use("/audio", express.static(path.join(__dirname, "uploads", "files")));
 
 // routes
 app.use("/api", user);
