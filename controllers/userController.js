@@ -22,7 +22,8 @@ exports.signUp = async (req, res) => {
 
     User.create(user, (err, data) => {
         if (err) return res.status(500).send(err);
-        res.status(201).send(data);
+        const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET_KEY);
+        res.status(201).send({ email, token });
     });
 };
 
@@ -39,7 +40,7 @@ exports.signIn = async (req, res) => {
     if (!validPass) return res.status(401).send("Invalid Credentials");
 
     const token = jwt.sign({ id: exist._id }, process.env.JWT_SECRET_KEY);
-    const user = { name: exist?.name, email, token, code: exist._id };
+    const user = { email, token };
 
     res.status(200).send(user);
 };

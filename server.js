@@ -34,10 +34,10 @@ app.use(morgan("dev"));
 // set static folder
 // it is a choice that you wanna use __dirname or not because you are on root level.
 app.use(express.static(path.join(__dirname, "public")));
-// app.use("/images", express.static("https://musicfilesforheroku.s3.us-west-1.amazonaws.com/uploads/images"));
-// app.use("/audio", express.static("https://musicfilesforheroku.s3.us-west-1.amazonaws.com/uploads/audio"));
 // app.use("/audio", express.static(path.join(__dirname, "uploads", "audio")));
 // app.use("/audio", express.static(path.join(__dirname, "uploads", "files")));
+// app.use("/image", express.static("https://musicfilesforheroku.s3.us-west-1.amazonaws.com/uploads/images/Ecossaise1-eng.jpg"));
+// app.use("/audio", express.static("https://musicfilesforheroku.s3.us-west-1.amazonaws.com/uploads"));
 
 // routes
 app.use("/api", user);
