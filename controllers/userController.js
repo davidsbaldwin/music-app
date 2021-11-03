@@ -28,21 +28,37 @@ exports.signUp = async (req, res) => {
 };
 
 exports.signIn = async (req, res) => {
-    const { password, email } = await req.body;
+    const { password, email, code } = await req.body;
+    if (code) {
+        if (!codes.includes(code)) return res.status(401).send("Sorry, you are not the owner.");
 
-    const { error } = singInValidation.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+        const { error } = singUpValidation.validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
 
-    const exist = await User.findOne({ email });
-    if (!exist) return res.status(401).send("Invalid Credentials");
+        const exist = await User.findOne({ email: email }, { code: code });
+        if (exist) {
+            // console.log("Exists");
+            const hashedPass = await bcrypt.hash(password, 10);
+            const update = await User.findOneAndUpdate({ email: email, code: code }, { password: hashedPass });
+            if (update) return res.status(200).send("Password Changed!");
+        }
+        return res.status(422).send("Sorry, you are not the owner.");
+    } else {
+        delete req.body.code;
+        const { error } = singInValidation.validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
 
-    const validPass = await bcrypt.compare(password, exist.password);
-    if (!validPass) return res.status(401).send("Invalid Credentials");
+        const exist = await User.findOne({ email });
+        if (!exist) return res.status(401).send("Invalid Credentials");
 
-    const token = jwt.sign({ id: exist._id }, process.env.JWT_SECRET_KEY);
-    const user = { email, token };
+        const validPass = await bcrypt.compare(password, exist.password);
+        if (!validPass) return res.status(401).send("Invalid Credentials");
 
-    res.status(200).send(user);
+        const token = jwt.sign({ id: exist._id }, process.env.JWT_SECRET_KEY);
+        const user = { email, token };
+
+        res.status(200).send(user);
+    }
 };
 
 exports.getAlbums = async (req, res) => {
@@ -59,7 +75,11 @@ exports.getSongs = async (req, res) => {
     // const domainHost = `${req.protocol}://${req.get("host")}/`;
     try {
         const songs = await Songs.find({ Album_Name: album_name });
-        return res.status(200).send(songs);
+        if (songs.length > 0) {
+            const album = await Albums.findOne({ _id: songs[0].Album_id });
+            return res.status(200).send([songs, album]);
+        }
+        return res.status(200).send([songs]);
     } catch (err) {
         return res.status(500).send({ msg: "Not Found!", err });
     }
