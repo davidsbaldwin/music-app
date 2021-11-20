@@ -4,6 +4,7 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const Albums = require("../models/Album");
 const Songs = require("../models/Songs");
+const History = require("../models/History");
 const codes = require("../data/codes");
 
 exports.signUp = async (req, res) => {
@@ -80,6 +81,44 @@ exports.getSongs = async (req, res) => {
             return res.status(200).send([songs, album]);
         }
         return res.status(200).send([songs]);
+    } catch (err) {
+        return res.status(500).send({ msg: "Not Found!", err });
+    }
+};
+
+exports.addHistory = async (req, res) => {
+    const { songName, albumName, userEmail } = await req.body;
+    if (songName && albumName && userEmail) {
+        const history = { songName, albumName, userEmail };
+        History.create(history, (err, data) => {
+            if (err) return res.status(401).send(err);
+            res.status(201).send({ data });
+        });
+    }
+    // const { album_name } = req.params;
+    // const domainHost = `${req.protocol}://${req.get("host")}/`;
+    // try {
+    //     const songs = await Songs.find({ Album_Name: album_name });
+    //     if (songs.length > 0) {
+    //         const album = await Albums.findOne({ _id: songs[0].Album_id });
+    //         return res.status(200).send([songs, album]);
+    //     }
+    //     return res.status(200).send([songs]);
+    // } catch (err) {
+    //     return res.status(500).send({ msg: "Not Found!", err });
+    // }
+};
+
+exports.getHistory = async (req, res) => {
+    const { user_email } = req.params;
+    // const domainHost = `${req.protocol}://${req.get("host")}/`;
+    try {
+        const history = await History.find({ userEmail: user_email }).sort({ _id: -1 }).limit(20);
+        // if (history.length > 0) {
+        //     const album = await Albums.findOne({ _id: songs[0].Album_id });
+        //     return res.status(200).send([songs, album]);
+        // }
+        return res.status(200).send([history]);
     } catch (err) {
         return res.status(500).send({ msg: "Not Found!", err });
     }
