@@ -16,8 +16,8 @@ const history = new Schema({
         required: true,
     },
     createdAt: {
-        type: Date,
-        default: new Date(),
+        type: String,
+        required: true,
     },
 });
 

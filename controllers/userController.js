@@ -87,9 +87,9 @@ exports.getSongs = async (req, res) => {
 };
 
 exports.addHistory = async (req, res) => {
-    const { songName, albumName, userEmail } = await req.body;
-    if (songName && albumName && userEmail) {
-        const history = { songName, albumName, userEmail };
+    const { songName, albumName, userEmail, createdAt } = await req.body;
+    if (songName && albumName && userEmail && createdAt) {
+        const history = { songName, albumName, userEmail, createdAt };
         History.create(history, (err, data) => {
             if (err) return res.status(401).send(err);
             res.status(201).send({ data });
