@@ -22,6 +22,12 @@ exports.signUp = async (req, res) => {
     user = { ...req.body, trial: true, password: hashedPass };
   } else if (!codes.includes(code)) {
     return res.status(400).send("Invalid Code: " + code);
+  } else if (code.includes(code)) {
+    const codeExists = await User.findOne({ $or: [{ email }, { code }] });
+    if (codeExists)
+      return res.status(400).send("Sorry, you are not the owner.");
+    const hashedPass = await bcrypt.hash(password, 10);
+    user = { ...req.body, trial: true, password: hashedPass };
   }
 
   const { error } = singUpValidation.validate(req.body);
