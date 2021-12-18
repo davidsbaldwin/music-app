@@ -29,7 +29,7 @@ exports.signUp = async (req, res) => {
     if (codeExists)
       return res.status(400).send("Sorry, you are not the owner.");
     const hashedPass = await bcrypt.hash(password, 10);
-    user = { ...req.body, trial: true, password: hashedPass };
+    user = { ...req.body, password: hashedPass };
   }
 
   const { error } = singUpValidation.validate(req.body);
