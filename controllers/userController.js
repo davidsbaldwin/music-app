@@ -14,11 +14,13 @@ exports.signUp = async (req, res) => {
   const { password, email, code } = await req.body;
   console.log(req.body);
   console.log(code);
+  let trial = false;
   let user;
   if (code === process.env.trialKey) {
     const exist = await User.findOne({ email });
     if (exist) return res.status(422).send("User Already Exist");
     const hashedPass = await bcrypt.hash(password, 10);
+    trial = true;
     user = { ...req.body, trial: true, password: hashedPass };
   } else if (!codes.includes(code)) {
     return res.status(400).send("Invalid Code: " + code);
@@ -36,7 +38,11 @@ exports.signUp = async (req, res) => {
   User.create(user, (err, data) => {
     if (err) return res.status(500).send(err);
     const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET_KEY);
-    res.status(201).send({ email, token, expiresIn: 3 });
+    if (trial) {
+      res.status(201).send({ email, token, expiresIn: 3 });
+    } else {
+      res.status(201).send({ email, token });
+    }
   });
 };
 
