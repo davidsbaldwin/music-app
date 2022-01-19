@@ -1,5 +1,6 @@
 const express = require("express");
 const user = require("./routes/userRoutes");
+const admin = require("./routes/adminRoutes");
 const path = require("path");
 const cors = require("cors");
 const connectDB = require("./db");
@@ -48,6 +49,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // routes
 app.use("/api", user);
+app.use("/admin", admin);
 
 // To get S3 files
 app.get("/files", (req, res) => {
@@ -83,9 +85,9 @@ app.get("/files/:Key", (req, res) => {
 });
 
 // wrong route
-app.use((req, res) => {
-  res.send({ msg: "Server Started" });
-});
+// app.use((req, res) => {
+//   res.send({ msg: "Server Started" });
+// });
 
 // CORS middleware
 app.use((req, res, next) => {
