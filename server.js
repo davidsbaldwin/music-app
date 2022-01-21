@@ -105,11 +105,12 @@ app.use((req, res, next) => {
 });
 
 // check user trial period
-cron.schedule("0 */1 * * *", async () => {
+// "0 */1 * * *" <---run evry hour
+cron.schedule("*/15 * * * *", async () => {
   console.log("running a task every minute");
   const users = await User.find({ trial: true });
   let expired = [];
-  await users.map((user) => {
+  users.map((user) => {
     let fomatted_date = moment(user.createdAt).format("YYYY-MM-DD");
 
     let current_date = moment().format("YYYY-MM-DD");
