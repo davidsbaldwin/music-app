@@ -16,7 +16,7 @@ const Advertisement = () => {
             {/* <video>
                 <source src="" type="video/mp4" />
             </video> */}
-            <div>
+            /*<div>
             <iframe
                 width="100%"
                 height="150"
@@ -32,6 +32,7 @@ const Advertisement = () => {
                     <p>Mulder&apos;s Christmas Greeting: May God bless you in the year to come with peace, hope, and joy in Christ, our Savior.</p>
                 </span>
             </div>
+            */
         </div>
     );
 };
